@@ -1,27 +1,21 @@
-import type { NextPage } from "next";          //9- Nueva respuesta del if, que muestra la 'StoreCard' Linkeada a /Loquesea
 
-import type { Store } from "../types";
+import type { Store } from "../types"; //10-En lugar de useEffect importamos GetServerSideProps agregando las <Props>. (El Resultado es el mismo de 9)
 
-import { useEffect, useState } from "react";
 import { Main } from "next/document";
+
 import StoreCard from "../components/StoreCard";
 
 import Link from "next/link";
 
-const Inicio: NextPage = () => {
+import type {GetServerSideProps, NextPage} from "next";
 
-    const [stores, setStores] = useState<Store[]>([]);
+import api from "../api";
 
-    useEffect(()=>{
-        fetch("/api/stores")
-        .then((res)=> res.json())
+interface Props {
+    stores: Store[];
+}
 
-        .then((stores: Store[])=> setStores(stores));
-    },[]);
-
-    if (!stores.length) {  
-        return <span>cargando...</span>;
-    }
+const Inicio: NextPage<Props> = ({stores}) => {
 
     return (
     <main style={{display: "flex", flexDirection: "column", gap: 12  }}>
@@ -34,6 +28,15 @@ const Inicio: NextPage = () => {
         ))}
     </main>
     );
-};
+        };
 
+export const getServerSideProps: GetServerSideProps = async () => {
+
+const stores = await api.list();
+
+
+return {
+        props: {stores}
+};
+};
 export default Inicio;
