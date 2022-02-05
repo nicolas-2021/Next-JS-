@@ -1,8 +1,12 @@
-import type { NextPage } from "next";
+import type { NextPage } from "next";          //9- Nueva respuesta del if, que muestra la 'StoreCard' Linkeada a /Loquesea
 
 import type { Store } from "../types";
 
 import { useEffect, useState } from "react";
+import { Main } from "next/document";
+import StoreCard from "../components/StoreCard";
+
+import Link from "next/link";
 
 const Inicio: NextPage = () => {
 
@@ -19,7 +23,17 @@ const Inicio: NextPage = () => {
         return <span>cargando...</span>;
     }
 
-    return <div>Hello Base</div>;//7-Si previamente  creamos la SubApi en la carpeta api !stores.length = false ya que hubo comunicacion con los Datos existentes que deciamos en el comentario anterior.
+    return (
+    <main style={{display: "flex", flexDirection: "column", gap: 12  }}>
+        {stores.map((store) => (
+        <Link key={store.id} href={`/${store.id}`}>
+        <a>
+        <StoreCard store={store} />
+        </a>
+        </Link>
+        ))}
+    </main>
+    );
 };
 
 export default Inicio;
