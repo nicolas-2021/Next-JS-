@@ -1,27 +1,45 @@
-import type {NextPage} from "next";//3-lo que este en [id].tsx se ve reflejado en cualquier path ej: /Loquesea
+import type {GetStaticPaths, GetStaticProps, NextPage} from "next";//12-En rutas dinamicas como esta, es necesario definir getStaticPaths para que funcione el getStaticProps.
 
-import {NextRouter, withRouter} from "next/router";
+import api from "../api"; // importamos api para traer 'datos' de alguna parte (base de datos, o archivo con datos como aca)
 
 import Link from "next/link";
 
+import type { Store } from "../types"; //importamos el tipo Store
+
+import StoreCard from "../components/StoreCard";//importamos las StoreCard
+
 interface Props {
-  router: NextRouter;
+  store: Store;
 }
 
-  const Store: NextPage<Props> = ({router}) => {
+  const Store: NextPage<Props> = ({store}) => {
   return (
     <div>
-      <p>presione el Ancla</p>
-      <a href="/">ANCLA</a> 
-      <br></br>
-      <p>presione el Boton</p>
-      <button onClick={() => router.push("/")}>BOTON</button>
-      <br></br>
-      <p>presione el Link</p>
+      <StoreCard store= {store} />
       <Link href="/">LINK</Link>
     </div>
-  );//1ro: hay un ancla tipica html, 2do: boton que usa un router de esta manera, 3ro: etiqueta Link (los 3 hacen la misma accion ir a '/')
+  );
 };
 
+export const getStaticProps: GetStaticProps = async ({params}) => {
 
-export default withRouter(Store);
+  const store = await api.fetch(params?.id as string); //Quiero ahora un fetch; para una ruta específica. Además como está dentro de Pages tengo el parametro id disponible como string.
+  
+  return {
+      props: {store}
+  };
+  };
+
+ export const getStaticPaths:  GetStaticPaths = async() => {    //Le digo que genere una ruta 'estática' con la lista de stores.
+
+  const stores = await api.list();
+
+  return {
+      paths: stores.map((store) => ({params: {id: store.id}})),    //Le digo que busque en la ruta estatica de stores, 'un' solo store, . por ejemplo:manolo-rivadavia.
+      fallback: "blocking",
+  };
+
+ };
+
+
+export default Store;

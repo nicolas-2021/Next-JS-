@@ -1,5 +1,5 @@
 
-import type { Store } from "../types"; //10-En lugar de useEffect importamos GetServerSideProps agregando las <Props>. (El Resultado es el mismo de 9)
+import type { Store } from "../types";//11-Otra forma en lugar de GetServerSideProps que ejecuta en tiempo de ejecucion es usar getStaticProps que ejecuta en tiempo de Compilacion.
 
 import { Main } from "next/document";
 
@@ -7,7 +7,7 @@ import StoreCard from "../components/StoreCard";
 
 import Link from "next/link";
 
-import type {GetServerSideProps, NextPage} from "next";
+import type {GetStaticProps, NextPage} from "next";
 
 import api from "../api";
 
@@ -30,7 +30,7 @@ const Inicio: NextPage<Props> = ({stores}) => {
     );
         };
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
 
 const stores = await api.list();
 
